@@ -5,7 +5,6 @@
   font-style: normal;
 }
 
-
 * {
   font-family: 'GmarketSansMedium';
 }
@@ -26,4 +25,10 @@ a {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Sunflower:wght@500&display=swap');
+
+*{
+  font-family: 'Sunflower', sans-serif;
 }

@@ -1,9 +1,3 @@
-<style>
-    #div_books img{
-        cursor: pointer;
-    }
-</style>
-
 <div class="row my-5">
     <div class="col my-5">
         <!-- 검색폼 -->
@@ -23,9 +17,6 @@
             <span id="span_page" class="mx-3"></span>
             <button id="next" class="btn btn-primary">다음</button>
         </div>
-        <!-- 지도출력 -->
-        <div id="map" style="width:500px;height:400px;"></div>
-
     </div>
 </div>
 <!-- 도서 검색 template -->
@@ -34,7 +25,7 @@
         <div class="col col-6 col-md-4 col-lg-2 mb-3">
             <div class="card">
                 <div class="card-body">
-                    <img src="{{check thumbnail}}" width="90%" index="{{@index}}" style="margin:0 auto; display:block">
+                    <img src="{{check thumbnail}}" width="90%" style="margin:0 auto; display:block">
                     <div class="ellipsis pt-3" style="form-size:0.8rem">{{title}}</div>
                 </div>
                 <div class="card-footer" style="font-size:0.8rem">
@@ -42,7 +33,6 @@
                 </div>
             </div>
         </div>
-        <%-include('books/modal.ejs')%>
     {{/each}}
 </script>
 <script>
@@ -62,11 +52,6 @@
 <script>
     let query = $(frm.query).val();
     let page = 1;
-
-    $("#div_books").on("click", "img", function(){
-        let index=$(this).attr("index");
-        $("#modal" + index).modal("show");
-    });
 
     getBooks();
     $(frm).on("submit", function(e){
