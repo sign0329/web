@@ -1,8 +1,10 @@
 <div class="my-5">
     <h1 class="text-center mb-5">게시글 정보</h1>
+    <div id="btn-group" class="text-end mb-2" style="display: none">
+        <button class="btn btn-dark btn-sm">수정</button>
+        <button class="btn btn-danger btn-sm">삭제</button>
+    </div>
     <div id="div_post"></div>
-
-    
 </div>
 <script id="temp_post" type="x=handlebars-template">
     <div class="card">
@@ -28,5 +30,10 @@
     console.log(snapshot.data());
     const temp=Handlebars.compile($("#temp_post").html());
     $("#div_post").html(temp(snapshot.data()));
+
+    const post=snapshot.data();
+    if(sessionStorage.getItem("email")==post.email){
+        $("#btn-group").show();
+    }
 
 </script>
