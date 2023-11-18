@@ -1,0 +1,116 @@
+<style>
+    #div_books img {cursor: pointer;}
+</style>
+<div class="row my-5">
+    <div class="col">
+        <h1 class="text-center mb-5">도서검색</h1>
+        <div class="row justify-content-end">
+            <form class="col-6 col-lg-3 col-md-4 mb-3" name="frm">
+                <div class="input-group">
+                    <input class="form-control" placeholder="검색어" name="query" value="웹서버">
+                    <button class="btn btn-dark">검색</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="div_books"></div>
+        <div class="text-center" id="div_page">
+            <button class="btn btn-dark" id="prev">이전</button>
+            <span class="mx-3" id="span_page">1/10</span>
+            <button class="btn btn-dark" id="next">다음</button>
+        </div>
+    </div>
+</div>
+<script type="x-handlebars-template" id="temp_books">
+    <table class="table table-striped">
+        {{#each documents}}
+        <tr>
+            <td><img src="{{emptyCheck thumbnail}}" index="{{@index}}" width="50"></td>
+            <td>{{title}}</td>
+            <td>{{format price}}</td>
+            <td>{{authors}}</td>
+            <td><button class="btn btn-dark" id="book-info" index="{{@index}}">도서정보</button></td>
+        </tr>
+        <%-include("modal.ejs")%>    
+        {{/each}}
+    </table>
+</script>
+<script>
+    Handlebars.registerHelper("emptyCheck", function(thumbnail){
+        return (thumbnail) ? thumbnail : "http://via.placeholder.com/120x170";
+    });
+
+    Handlebars.registerHelper("format", function(price){
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
+    });
+</script>
+<script>
+    //id : #
+    //class : .
+    //tag : ""
+    //name : ""(X)
+    
+    let query=$(frm.query).val();
+    let page=1;
+
+    $("#div_books").on("click", "img", function(){
+        let index=$(this).attr("index")
+        $("#modal" + index).modal("show");
+    });
+
+    $("#div_books").on("click", "#book-info", function(){
+        let index=$(this).attr("index")
+        $("#modal" + index).modal("show");
+    });
+
+    $(frm).on("submit", function(e){
+        e.preventDefault();
+        query=$(frm.query).val();
+        if(query=="") {
+            alert("검색 내용을 입력하세요!");
+            $(frm.query).focus();
+        }else{
+            page=1;
+            getBooks();
+        }
+    });
+
+    $("#next").on("click", function(){
+        page++;
+        getBooks();    
+    });
+
+    $("#prev").on("click", function(){
+        page--;
+        getBooks();
+    });
+
+    getBooks();
+    function getBooks() {
+        $.ajax({
+            type:'GET',
+            url:'https://dapi.kakao.com/v3/search/book?target=title',
+            headers:{Authorization:"KakaoAK 65b4c0591600fd46e7194fae2ec7f2e6"},
+            data:{ query:query, page:page, size:6 },
+            dataType:'json',
+            success:function(data){
+                console.log(data);
+                temp=Handlebars.compile($("#temp_books").html());
+                $("#div_books").html(temp(data));
+                $("#span_page").html(page);
+
+                (page == 1) ? $("#prev").attr("disabled", true) : $("#prev").attr("disabled", false);
+                (data.meta.is_end) ? $("#next").attr("disabled", true) : $("#next").attr("disabled", false);
+                
+                let last=Math.ceil(data.meta.pageable_count/6);
+                if(data.meta.pageable_count>0){
+                    $("#div_page").show();
+                    $("#span_page").html(page + "/" + last);
+                }else{
+                    $("#div_page").hide();
+                    $("#div_books").html(`<h1 class='text-center'>'${query}' 도서가 존재하지 않습니다.</h1>`)
+                }
+            }
+        });
+    }
+</script>
